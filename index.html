@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Breathiness Rating Task</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="instruction">Click the icon to play a sound. Then drag it from the top panel down to the scale. You can drag the icon again inside the scale.</div>
+
+  <div class="sound-panel">
+    <div id="soundIcon" class="draggable" draggable="true">🔊</div>
+  </div>
+
+  <div class="scale-wrapper">
+    <div class="label-left">Less breathy</div>
+    <div class="scale-container">
+      <div class="scale">
+        <div class="drop-zone" id="dropZone"></div>
+      </div>
+    </div>
+    <div class="label-right">More breathy</div>
+  </div>
+
+  <button id="submitBtn" onclick="exportCSV()">Submit</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
