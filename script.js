@@ -7,6 +7,7 @@ let sounds = [
   "0520_a_h2h3_pos39.wav", "0520_a_h2h3_pos49.wav"
 ];
 
+const originalSounds = [...sounds];
 sounds = sounds.map(filename => "sounds/" + filename);
 
 const colors = [
@@ -15,12 +16,18 @@ const colors = [
   "#9a6324", "#fffac8", "#800000", "#aaffc3"
 ];
 
-// Shuffle sounds and colors together
+// Shuffle both sounds and colors
 for (let i = sounds.length - 1; i > 0; i--) {
   const j = Math.floor(Math.random() * (i + 1));
   [sounds[i], sounds[j]] = [sounds[j], sounds[i]];
   [colors[i], colors[j]] = [colors[j], colors[i]];
 }
+
+// Build order mapping: sound filename → order
+const orderMap = {};
+sounds.forEach((s, i) => {
+  orderMap[s] = i + 1;
+});
 
 let currentIndex = 0;
 
@@ -37,8 +44,9 @@ let draggedElement = null;
 let offsetX = 0;
 let offsetY = 0;
 
-// Initial icon styling
 soundIcon.dataset.sound = sounds[currentIndex];
+soundIcon.dataset.color = colors[currentIndex];
+soundIcon.dataset.order = currentIndex + 1;
 soundIcon.innerText = "🔊";
 soundIcon.style.backgroundColor = colors[currentIndex];
 soundIcon.style.width = "36px";
@@ -87,6 +95,8 @@ dropZone.addEventListener("drop", function (e) {
     newIcon.className = "draggable";
     newIcon.setAttribute("draggable", true);
     newIcon.dataset.sound = sounds[currentIndex];
+    newIcon.dataset.color = colors[currentIndex];
+    newIcon.dataset.order = currentIndex + 1;
     newIcon.innerText = "🔊";
     newIcon.style.backgroundColor = colors[currentIndex];
     newIcon.style.width = "36px";
@@ -113,17 +123,34 @@ dropZone.addEventListener("drop", function (e) {
 });
 
 function exportCSV() {
-  const icons = dropZone.querySelectorAll(".draggable");
   const dropRect = dropZone.getBoundingClientRect();
-  const rows = [["sound", "x_normalized", "y_normalized"]];
+  const rows = [["sound", "x_normalized", "y_normalized", "color", "order"]];
+  const placed = {};
 
-  icons.forEach(icon => {
+  // Collect placed icons into a map
+  dropZone.querySelectorAll(".draggable").forEach(icon => {
     const iconRect = icon.getBoundingClientRect();
     const xCenter = (iconRect.left + iconRect.width / 2) - dropRect.left;
     const yCenter = (iconRect.top + iconRect.height / 2) - dropRect.top;
     const x = xCenter / dropRect.width;
     const y = 1 - (yCenter / dropRect.height);
-    rows.push([icon.dataset.sound, x.toFixed(6), y.toFixed(6)]);
+    placed[icon.dataset.sound] = {
+      x: x.toFixed(6),
+      y: y.toFixed(6),
+      color: icon.dataset.color,
+      order: icon.dataset.order
+    };
+  });
+
+  // Output sounds in original filename order
+  originalSounds.forEach(name => {
+    const full = "sounds/" + name;
+    if (placed[full]) {
+      const p = placed[full];
+      rows.push([name, p.x, p.y, p.color, p.order]);
+    } else {
+      rows.push([name, "", "", "", ""]);
+    }
   });
 
   const csvContent = rows.map(e => e.join(",")).join("\n");
