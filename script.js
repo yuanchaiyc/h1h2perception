@@ -7,7 +7,20 @@ let sounds = [
   "0520_a_h2h3_pos39.wav", "0520_a_h2h3_pos49.wav"
 ];
 
-sounds = sounds.map(filename => "sounds/" + filename).sort(() => Math.random() - 0.5);
+sounds = sounds.map(filename => "sounds/" + filename);
+
+const colors = [
+  "#e6194b", "#3cb44b", "#ffe119", "#4363d8", "#f58231", "#911eb4",
+  "#46f0f0", "#f032e6", "#bcf60c", "#fabebe", "#008080", "#e6beff",
+  "#9a6324", "#fffac8", "#800000", "#aaffc3"
+];
+
+// Shuffle sounds and colors together
+for (let i = sounds.length - 1; i > 0; i--) {
+  const j = Math.floor(Math.random() * (i + 1));
+  [sounds[i], sounds[j]] = [sounds[j], sounds[i]];
+  [colors[i], colors[j]] = [colors[j], colors[i]];
+}
 
 let currentIndex = 0;
 
@@ -24,7 +37,16 @@ let draggedElement = null;
 let offsetX = 0;
 let offsetY = 0;
 
+// Initial icon styling
 soundIcon.dataset.sound = sounds[currentIndex];
+soundIcon.innerText = "🔊";
+soundIcon.style.backgroundColor = colors[currentIndex];
+soundIcon.style.width = "36px";
+soundIcon.style.height = "36px";
+soundIcon.style.display = "flex";
+soundIcon.style.alignItems = "center";
+soundIcon.style.justifyContent = "center";
+soundIcon.style.fontSize = "30px";
 
 soundIcon.addEventListener("dragstart", function (e) {
   draggedElement = e.target;
@@ -50,10 +72,8 @@ dropZone.addEventListener("drop", function (e) {
     dropZone.appendChild(draggedElement);
   }
 
-  // Clamp position to stay within drop zone
   const iconWidth = draggedElement.offsetWidth;
   const iconHeight = draggedElement.offsetHeight;
-
   const clampedX = Math.max(0, Math.min(x, dropRect.width - iconWidth));
   const clampedY = Math.max(0, Math.min(y, dropRect.height - iconHeight));
 
@@ -62,11 +82,19 @@ dropZone.addEventListener("drop", function (e) {
 
   if (currentIndex < sounds.length - 1) {
     currentIndex++;
+
     const newIcon = document.createElement("div");
     newIcon.className = "draggable";
-    newIcon.innerText = "🔊";
     newIcon.setAttribute("draggable", true);
     newIcon.dataset.sound = sounds[currentIndex];
+    newIcon.innerText = "🔊";
+    newIcon.style.backgroundColor = colors[currentIndex];
+    newIcon.style.width = "36px";
+    newIcon.style.height = "36px";
+    newIcon.style.display = "flex";
+    newIcon.style.alignItems = "center";
+    newIcon.style.justifyContent = "center";
+    newIcon.style.fontSize = "30px";
 
     newIcon.addEventListener("click", function () {
       playSpecificSound(newIcon.dataset.sound);
@@ -101,7 +129,6 @@ function exportCSV() {
   const csvContent = rows.map(e => e.join(",")).join("\n");
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
-
   const link = document.createElement("a");
   link.setAttribute("href", url);
   link.setAttribute("download", "ratings.csv");
