@@ -1,11 +1,76 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Breathiness Rating Task</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Breathiness Task</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="jquery.min.js"></script>
+    <script src="jspsych.js"></script>
 </head>
 <body>
+
+      
+    <div id="debriefing" class="container">
+      <h2>
+        Participant ID: <input id="subjectid"> <br> <br>
+      </h2>
+      <div id = "doneWithDebriefingButtondiv">
+      <button id="doneWithDebriefing" onclick="startExperiment()">
+        Start
+      </button>
+    </div>
+    </div>
+
+  <div class="container">
+    <div id="intro" style="display:none;">
+      <h2>Welcome to the Training</h2>
+      <p>Here are examples of a breathy voice and a modal voice.</p>
+      <button onclick="playSample('breathy')">Play Breathy Example</button>
+      <button onclick="playSample('modal')">Play Modal Example</button>
+      <br><br>
+      <p>In the training session, in each trial, you will hear two sounds. Please identify whether the first or the second sound is breathier.</p>
+      <button onclick="startTraining()">Continue to Training</button>
+    </div>
+
+    <div id="training" style="display:none;">
+      <div id="correctCounter" style="text-align: center; font-size: 20px; margin: 20px;">
+          <p id = "trialnum">0/5</p>
+      </div>
+      <h2>Which sound is breathier?</h2>
+      <button onclick="checkTrainingResponse('first')">First</button>
+      <button onclick="checkTrainingResponse('second')">Second</button>
+      <div id="feedback"></div>
+    </div>
+
+        
+    <div id="fixation" style="display:none;">
+      <span>
+      &#10010
+      </span>
+    </div>
+    
+
+
+  </div>
+
+    <div id="mainTask" style="display:none;">
+      <h2>Now you will begin the drag-and-rate task.</h2>
+      <div id = "instruction">
+      <p>On the next six pages, you will see a sound icon. Click the icon to play the sound. You may listen to the sound as often as you like by clicking on the icon. Once you've listened to the sound at least once, move the icon into the box below by clicking and dragging the icon into the box. Once that icon is moved into a box, a new sound icon will appear above the box. Repeat the task above (listen to the icon, then move the icon into the box below) until all icons have been placed within the box</p>
+      <p>You should place the sound icon in the box from left (less breathy sounding) to right (more breathy sounding). Icons that sound equally breathy to you should be stacked one on top of the other within the box. You may use as much of the scale (from left-to-right) as you'd like</p>
+      <p>Once an icon is placed in the box, you can continue to listen to the sound by clicking on the icon, and can continue to move the icon around until you are satisfied with the placement of all icons. When finished, please click "Continue" to proceed to the next trial. There are six sets of sounds to sort and rate in total.</p>
+      </div>
+      <div id="mainTask" style="display:inline-block; text-align:center;">
+              <center><img src="picture/task_demo.png" height="200" width="600" id="taskimage" />
+      </div>
+      <button id = "continueBtn">Start</button>
+    </div>
+  
+
+<!-- the main task -->
+ <div id = "ratingTaskPage" style="display:none;">
   <div class="instruction">Click the icon to play a sound. Then drag it from the top panel down to the scale. You can drag the icon again inside the scale.</div>
 
   <div class="sound-panel">
@@ -22,8 +87,8 @@
     <div class="label-right" style="white-space: nowrap;">More breathy</div>
   </div>
 
-  <button id="submitBtn" onclick="exportCSV()">Submit</button>
+  <button id="submitBtn">Continue</button>
+  </div>
 
-  <script src="script.js"></script>
 </body>
 </html>
